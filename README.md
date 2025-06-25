@@ -4,8 +4,8 @@
 ## Projektbeschreibung
 
 Dieses Projekt ist ein interaktives Quizspiel, das mit Node-RED realisiert wurde.  
-- Die **Frage und die Antwortmöglichkeiten** werden auf dem **Node-RED Dashboard** angezeigt (Webbrowser).  
-- Die **Antwort wird per Hardware-Tasten** (S5 bis S8) ausgewählt.  
+- Die **Frage und die Antwortmöglichkeiten** werden auf dem **Node-RED Dashboard** angezeigt.  
+- Die **Antwort wird per Hardware-Tasten** ausgewählt.  
 - Nach der Antwort zeigt ein externes **LCD-Display** an, ob die Antwort „richtig“ oder „falsch“ war, oder ob die Zeit abgelaufen ist („Time Out“).  
 - Gleichzeitig simuliert ein **LED-Zeitbalken** eine Zeitbegrenzung, indem vier LEDs nacheinander aufleuchten. Wird keine Antwort innerhalb der Zeit gegeben, endet das Spiel mit „Time Out“.
 
