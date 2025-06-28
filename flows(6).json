@@ -1,0 +1,913 @@
+[
+    {
+        "id": "8bc08efbdb7567d0",
+        "type": "tab",
+        "label": "Quiz-Spiel",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "237496d0daaef551",
+        "type": "rpi-gpio in",
+        "z": "8bc08efbdb7567d0",
+        "name": "Taste S2",
+        "pin": "19",
+        "intype": "down",
+        "debounce": "25",
+        "read": false,
+        "bcm": true,
+        "x": 100,
+        "y": 500,
+        "wires": [
+            [
+                "35ac23c4ad457c4c"
+            ]
+        ]
+    },
+    {
+        "id": "390dca638aa96c41",
+        "type": "rpi-gpio in",
+        "z": "8bc08efbdb7567d0",
+        "name": "Taste S1",
+        "pin": "16",
+        "intype": "down",
+        "debounce": "25",
+        "read": false,
+        "bcm": true,
+        "x": 100,
+        "y": 460,
+        "wires": [
+            [
+                "cb620b5f3bdd44f0"
+            ]
+        ]
+    },
+    {
+        "id": "01e9339896182bde",
+        "type": "rpi-gpio in",
+        "z": "8bc08efbdb7567d0",
+        "name": "Taste S3",
+        "pin": "20",
+        "intype": "down",
+        "debounce": "25",
+        "read": false,
+        "bcm": true,
+        "x": 100,
+        "y": 540,
+        "wires": [
+            [
+                "ddab18f0fbef1b1e"
+            ]
+        ]
+    },
+    {
+        "id": "35b225e2cf8fc6af",
+        "type": "rpi-gpio in",
+        "z": "8bc08efbdb7567d0",
+        "name": "Taste S4",
+        "pin": "21",
+        "intype": "down",
+        "debounce": "25",
+        "read": false,
+        "bcm": true,
+        "x": 100,
+        "y": 580,
+        "wires": [
+            [
+                "3496ac266ed3d0dc"
+            ]
+        ]
+    },
+    {
+        "id": "e67f91b669133d89",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "Taste -> Antwortindex",
+        "func": "// Map GPIO Pin zu Antwortindex\nconst pinToIndex = {\n    16: 0,  // S1\n    19: 1,  // S2\n    20: 2,  // S3\n    21: 3   // S4\n};\n\nif (!msg.hasOwnProperty('pin')) {\n    node.warn(\"Kein pin in msg\");\n    return null;\n}\n\nmsg.payload = pinToIndex[msg.pin];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 480,
+        "wires": [
+            [
+                "5c93f22ce08cc304",
+                "76d1414b2613aa80",
+                "b1622932616e52e8"
+            ]
+        ]
+    },
+    {
+        "id": "5c93f22ce08cc304",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "Antwort prüfen",
+        "func": "flow.set('beantwortet', true);\nlet richtigeAntwort = flow.get('richtigeAntwort');\nif (msg.payload === richtigeAntwort) {\n    msg.payload = \"Richtig!\";\n} else {\n    msg.payload = \"Falsch!\";\n}\nreturn [msg, {payload: \"stop\"}];",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 680,
+        "y": 480,
+        "wires": [
+            [
+                "53c4d16be0be45e4"
+            ],
+            [
+                "82328720250c9522"
+            ]
+        ]
+    },
+    {
+        "id": "d0d7d198df20d76e",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED-Zeitlimit starten",
+        "func": "let pins = [5,6,13,19];\nlet msgs = [];\n\npins.forEach((pin, i) => {\n    msgs.push({payload: 1, pin: pin, delay: i * 1000});\n});\n\nreturn [msgs];",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 180,
+        "wires": [
+            [
+                "e0735a0ac6eec4c4",
+                "938381f85886cf92",
+                "24e31c5ef3f6bd23",
+                "f3e835750fe6bd43",
+                "9e691e3f3bd08574",
+                "6761184aead790fa"
+            ]
+        ]
+    },
+    {
+        "id": "9a94c971ebe82dcc",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 7",
+        "pin": "18",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1210,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "9ba187430c19d74a",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "Timeout Trigger",
+        "op1": "",
+        "op2": "timeout",
+        "op1type": "nul",
+        "op2type": "str",
+        "duration": "16000",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "ms",
+        "reset": "stop",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 480,
+        "y": 540,
+        "wires": [
+            [
+                "e4bdba0d93d3671a"
+            ]
+        ]
+    },
+    {
+        "id": "82328720250c9522",
+        "type": "change",
+        "z": "8bc08efbdb7567d0",
+        "name": "Timeout stoppen",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "stop",
+                "tot": "str"
+            }
+        ],
+        "x": 710,
+        "y": 540,
+        "wires": [
+            [
+                "9ba187430c19d74a"
+            ]
+        ]
+    },
+    {
+        "id": "e4bdba0d93d3671a",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "Timeout Feedback",
+        "func": "if (flow.get('beantwortet') === true) {\n    return null;\n}\nflow.set('beantwortet', true);\nmsg.payload = \"Zeit abgelaufen!\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 620,
+        "wires": [
+            [
+                "53c4d16be0be45e4"
+            ]
+        ]
+    },
+    {
+        "id": "76d1414b2613aa80",
+        "type": "debug",
+        "z": "8bc08efbdb7567d0",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "b1622932616e52e8",
+        "type": "debug",
+        "z": "8bc08efbdb7567d0",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "a1b8a4c5407ca098",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 12",
+        "pin": "15",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1220,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "febc06381f29fca9",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 11",
+        "pin": "14",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1220,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "fb6a9e82afe9e56c",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 10",
+        "pin": "13",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1220,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "118832c5b6477c8e",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 9",
+        "pin": "12",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1210,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "2ac7513fc63e9bce",
+        "type": "debug",
+        "z": "8bc08efbdb7567d0",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "cb620b5f3bdd44f0",
+        "type": "change",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pin",
+                "pt": "msg",
+                "to": "16",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 460,
+        "wires": [
+            [
+                "e67f91b669133d89"
+            ]
+        ]
+    },
+    {
+        "id": "35ac23c4ad457c4c",
+        "type": "change",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pin",
+                "pt": "msg",
+                "to": "19",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 500,
+        "wires": [
+            [
+                "e67f91b669133d89"
+            ]
+        ]
+    },
+    {
+        "id": "ddab18f0fbef1b1e",
+        "type": "change",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pin",
+                "pt": "msg",
+                "to": "20",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 540,
+        "wires": [
+            [
+                "e67f91b669133d89"
+            ]
+        ]
+    },
+    {
+        "id": "3496ac266ed3d0dc",
+        "type": "change",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pin",
+                "pt": "msg",
+                "to": "21",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 580,
+        "wires": [
+            [
+                "e67f91b669133d89"
+            ]
+        ]
+    },
+    {
+        "id": "a31b43c6124300f5",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 9",
+        "pin": "17",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1210,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "2a5487a8d0cba028",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 8",
+        "pin": "27",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1210,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "fa6ce98a04350bea",
+        "type": "rpi-gpio out",
+        "z": "8bc08efbdb7567d0",
+        "name": "LED 9",
+        "pin": "22",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1210,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "53c4d16be0be45e4",
+        "type": "ui_text",
+        "z": "8bc08efbdb7567d0",
+        "group": "c5b8ba5dbea08a8f",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Ergebnis",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 940,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "81bcadd58c497016",
+        "type": "inject",
+        "z": "8bc08efbdb7567d0",
+        "name": "Frage starten",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{}",
+        "payloadType": "json",
+        "x": 80,
+        "y": 120,
+        "wires": [
+            [
+                "17549d72073865c2"
+            ]
+        ]
+    },
+    {
+        "id": "17549d72073865c2",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "Zufällige Frage wählen",
+        "func": "const fragen = [\n    { frage: \"Wie heißt die Hauptstadt von Frankreich?\", antworten: [\"Berlin\", \"Paris\", \"Rom\", \"Madrid\"], richtigeAntwortIndex: 1 },\n    { frage: \"Was ist 2 + 2?\", antworten: [\"3\", \"4\", \"5\", \"6\"], richtigeAntwortIndex: 1 },\n    { frage: \"Welche Farbe hat der Himmel?\", antworten: [\"Blau\", \"Grün\", \"Rot\", \"Gelb\"], richtigeAntwortIndex: 0 }\n];\ncontext.set('beantwortet', false);\nmsg.payload = fragen[Math.floor(Math.random() * fragen.length)];\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 120,
+        "wires": [
+            [
+                "ef127174c8f24a17",
+                "12d10a68729bcec2",
+                "9ba187430c19d74a",
+                "d0d7d198df20d76e"
+            ]
+        ]
+    },
+    {
+        "id": "ef127174c8f24a17",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "Frage speichern (richtige Antwort)",
+        "func": "flow.set('richtigeAntwort', msg.payload.richtigeAntwortIndex);\nflow.set('beantwortet', false);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 120,
+        "wires": [
+            [
+                "2ac7513fc63e9bce"
+            ]
+        ]
+    },
+    {
+        "id": "12d10a68729bcec2",
+        "type": "ui_template",
+        "z": "8bc08efbdb7567d0",
+        "group": "c5b8ba5dbea08a8f",
+        "name": "Frage + Antworten anzeigen",
+        "order": 1,
+        "width": 6,
+        "height": 6,
+        "format": "<h3>Frage:</h3>\n<p>{{msg.payload.frage}}</p>\n<h4>Antworten:</h4>\n<ul>\n  <li>S1: {{msg.payload.antworten[0]}}</li>\n  <li>S2: {{msg.payload.antworten[1]}}</li>\n  <li>S3: {{msg.payload.antworten[2]}}</li>\n  <li>S4: {{msg.payload.antworten[3]}}</li>\n</ul>",
+        "storeOutMessages": true,
+        "fwdInMessages": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 600,
+        "y": 80,
+        "wires": [
+            [
+                "2ac7513fc63e9bce"
+            ]
+        ]
+    },
+    {
+        "id": "d9bbd0ee27972587",
+        "type": "ui_button",
+        "z": "8bc08efbdb7567d0",
+        "name": "Neuer Versuch",
+        "group": "c5b8ba5dbea08a8f",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Neuer Versuch",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 160,
+        "y": 320,
+        "wires": [
+            [
+                "81bcadd58c497016",
+                "8035f8da8b56560e",
+                "2d0386d2c2aced2e"
+            ]
+        ]
+    },
+    {
+        "id": "8035f8da8b56560e",
+        "type": "change",
+        "z": "8bc08efbdb7567d0",
+        "name": "LEDs aus",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 280,
+        "wires": [
+            [
+                "9ba187430c19d74a",
+                "9a94c971ebe82dcc",
+                "2a5487a8d0cba028",
+                "a31b43c6124300f5",
+                "fa6ce98a04350bea",
+                "a1b8a4c5407ca098",
+                "febc06381f29fca9",
+                "fb6a9e82afe9e56c",
+                "118832c5b6477c8e"
+            ]
+        ]
+    },
+    {
+        "id": "938381f85886cf92",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "4",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1060,
+        "y": 140,
+        "wires": [
+            [
+                "9a94c971ebe82dcc"
+            ]
+        ]
+    },
+    {
+        "id": "24e31c5ef3f6bd23",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "6",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1060,
+        "y": 180,
+        "wires": [
+            [
+                "a31b43c6124300f5"
+            ]
+        ]
+    },
+    {
+        "id": "e0735a0ac6eec4c4",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "2",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1060,
+        "y": 100,
+        "wires": [
+            [
+                "2a5487a8d0cba028"
+            ]
+        ]
+    },
+    {
+        "id": "f3e835750fe6bd43",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "8",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1200,
+        "y": 100,
+        "wires": [
+            [
+                "fa6ce98a04350bea"
+            ]
+        ]
+    },
+    {
+        "id": "9e691e3f3bd08574",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "10",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1210,
+        "y": 140,
+        "wires": [
+            [
+                "a1b8a4c5407ca098"
+            ]
+        ]
+    },
+    {
+        "id": "6761184aead790fa",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "12",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1210,
+        "y": 180,
+        "wires": [
+            [
+                "febc06381f29fca9"
+            ]
+        ]
+    },
+    {
+        "id": "2d0386d2c2aced2e",
+        "type": "function",
+        "z": "8bc08efbdb7567d0",
+        "name": "Timer reset",
+        "func": "msg.reset = true;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 240,
+        "wires": [
+            [
+                "e0735a0ac6eec4c4",
+                "938381f85886cf92",
+                "24e31c5ef3f6bd23",
+                "f3e835750fe6bd43",
+                "9e691e3f3bd08574",
+                "6761184aead790fa",
+                "eb36c0ceff894747",
+                "85e1cf1d0f9cddca"
+            ]
+        ]
+    },
+    {
+        "id": "eb36c0ceff894747",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "14",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1050,
+        "y": 220,
+        "wires": [
+            [
+                "fb6a9e82afe9e56c"
+            ]
+        ]
+    },
+    {
+        "id": "85e1cf1d0f9cddca",
+        "type": "trigger",
+        "z": "8bc08efbdb7567d0",
+        "name": "",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "16",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1210,
+        "y": 220,
+        "wires": [
+            [
+                "118832c5b6477c8e"
+            ]
+        ]
+    },
+    {
+        "id": "c5b8ba5dbea08a8f",
+        "type": "ui_group",
+        "name": "Quiz",
+        "tab": "3efb167804e09884",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3efb167804e09884",
+        "type": "ui_tab",
+        "name": "Quizspiel",
+        "icon": "dashboard",
+        "order": 1
+    }
+]
